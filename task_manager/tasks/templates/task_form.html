@@ -4,35 +4,88 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>{% if task %}Edit Task{% else %}Create Task{% endif %}</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+
+  <!-- My theme -->
+  <style>
+    body {
+      background-color: #f8f9fa;
+      font-family:Verdana, Geneva, Tahoma, sans-serif;
+    }
+    h1 {
+      font-weight: bold;
+    }
+    .modal-header {
+      background-color: #800020; 
+      color: white;
+    }
+    .btn-burgundy {
+      background-color: #800020;
+      color: white;
+      border: none;
+    }
+    .btn-burgundy:hover {
+      background-color: #5a0015;
+    }
+    .btn-outline-burgundy {
+      color: #800020;
+      border-color: #800020;
+    }
+    .btn-outline-burgundy:hover {
+      background-color: #800020;
+      color: white;
+    }
+    .form-control, .form-select {
+      border-radius: 8px;
+    }
+    .form-control:focus, .form-select:focus {
+      box-shadow: 0px 4px 10px rgb(88, 2, 2, 0.5);
+      border-color: #800020;
+    }
+  </style>
 </head>
 <body>
-  <h1>{% if task %}Edit Task{% else %}Create Task{% endif %}</h1>
 
-  <form method="post" action="{% if task %}update/{% else %}submit/{% endif %}">
-    {% csrf_token %}
-    {% if task %}
-        <input type="hidden" name="task_id" value="{{ task.id }}">
-    {% endif %}
-    
-    <label for="title">Title</label>
-    <input type="text" name="title" id="title" value="{{ task.title|default_if_none:'' }}" required>
+  <!-- Since in the instruction, it says that this file is for both add and update. 
+   I used conditional statements so that is the user clicks update, they will be redirected to this page fetching all information of editing task. 
+   The rest is same process as to add task/s. -->
+  <div class="modal-body">
+    <form method="post" action="{% if task %}/tasks/task_update/update/{% else %}/tasks/submit/{% endif %}"> 
+      {% csrf_token %}
+      {% if task %}
+          <input type="hidden" name="task_id" value="{{ task.id }}">
+      {% endif %}
 
-    <label for="description">Description</label>
-    <textarea name="description" id="description">{{ task.description|default_if_none:'' }}</textarea>
+      <div class="mb-3">
+        <label for="title" class="form-label">Title</label>
+        <input type="text" name="title" id="title" class="form-control" value="{{ task.title|default_if_none:'' }}" required>
+      </div>
 
-    <label for="due_date">Due Date</label>
-    <input type="date" name="due_date" id="due_date" value="{{ task.due_date|date:'Y-m-d' }}" required>
+      <div class="mb-3">
+        <label for="description" class="form-label">Description</label>
+        <textarea name="description" id="description" class="form-control" rows="3">{{ task.description|default_if_none:'' }}</textarea>
+      </div>
 
-    <label for="status">Status</label>
-    <select name="status" id="status" required>
-      <option value="Not Yet Started" {% if task.status == "Not Yet Started" %}selected{% endif %}>Not Yet Started</option>
-      <option value="In Progress" {% if task.status == "In Progress" %}selected{% endif %}>In Progress</option>
-      <option value="Overdue" {% if task.status == "Overdue" %}selected{% endif %} disabled>Overdue</option>
-    </select>
-    
-    <input type="submit" value="{% if task %}Update{% else %}Create{% endif %}">
-  </form>
+      <div class="mb-3">
+        <label for="due_date" class="form-label">Due Date</label>
+        <input type="date" name="due_date" id="due_date" class="form-control" value="{{ task.due_date|date:'Y-m-d' }}" required>
+      </div>
 
-  <button><a href="/tasks/">Back to Task List</a></button>  
+      <div class="mb-3">
+        <label for="status" class="form-label">Status</label>
+        <select name="status" id="status" class="form-select" required>
+          <option value="Not Yet Started" {% if task.status == "Not Yet Started" %}selected{% endif %}>Not Yet Started</option>
+          <option value="In Progress" {% if task.status == "In Progress" %}selected{% endif %}>In Progress</option>
+          <option value="Overdue" {% if task.status == "Overdue" %}selected{% endif %} disabled>Overdue</option>
+        </select>
+      </div>
+
+      <div class="d-flex justify-content-center">
+        <button type="submit" class="btn btn-burgundy me-2">{% if task %}Update{% else %}Create{% endif %}</button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+      </div>
+    </form>
+  </div>
+
 </body>
 </html>

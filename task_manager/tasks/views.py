@@ -3,20 +3,23 @@ from .models import Management
 from datetime import date
 
 
-def index(request):
+def task_list(request):
     tasks = Management.objects.all()
 
     for task in tasks:
         if task.due_date < date.today() and task.status != "Overdue":
             task.status = "Overdue"
+        else :
+            task.status = "In progress"
             task.save()
 
-    return render(request, 'index.html', {'tasks': tasks})
+    return render(request, 'task_list.html', {'tasks': tasks})
+# I put conditional statement here to satisfy the condition that if the date is less than the current date, it will be marked as overdue.
 
-def addTask(request):
+def task_create(request):
     return render(request, 'task_form.html')
 
-def editTask(request, task_id):
+def task_update(request, task_id):
     task = Management.objects.get(id=task_id)
     return render(request, 'task_form.html', {'task': task})
 
@@ -35,7 +38,7 @@ def update(request):
     task.save()
     return redirect('/tasks/')
 
-def deleteTask(request, task_id):
+def task_delete(request, task_id):
     task = Management.objects.get(id=task_id)
     return render(request, 'task_confirm_delete.html', {'task': task})
 

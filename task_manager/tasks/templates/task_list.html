@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Task List</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+
+  <!-- Style design for my view with burgundy and black themed basics -->
+  <style>
+    body {
+      background-color: #f8f9fa;
+      font-family: Verdana, Geneva, Tahoma, sans-serif;
+    }
+    h1 {
+      font-weight: bold;
+    }
+    .table thead {
+      background-color: #800020; 
+      color: white;
+    }
+    .btn-burgundy {
+      background-color: #800020;
+      color: white;
+      border: none;
+    }
+    .btn-burgundy:hover {
+      background-color: #5a0015;
+      color: white;
+    }
+    .btn-outline-burgundy {
+      color: #800020;
+      border-color: #800020;
+    }
+    .btn-outline-burgundy:hover {
+      background-color: #800020;
+      color: white;
+    }
+    #searchInput {
+      width: 50%;
+      margin: auto;
+      display: block;
+      box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+      border: none;
+    }
+  </style>
+</head>
+
+<body class="container mt-4">
+
+  <!-- Header  and search bar combined for better design. Pangit sa ibaba hehe -->
+  <div class="d-flex justify-content-between align-items-center">
+    <h1 class="text-burgundy">Task List</h1>
+    <div class="input-group" style="width: 50%;">
+      <input type="text" id="searchInput" class="form-control" placeholder="Search tasks...">
+    </div>
+  </div>
+  <br>
+  
+  <table class="table table-striped table-hover text-center mt-3">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Title</th>
+        <th>Description</th>
+        <th>Due Date</th>
+        <th>Status</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody id="taskTableBody">
+      {% for task in tasks %}
+        <tr>
+          <td>{{ task.id }}</td>
+          <td>{{ task.title }}</td>
+          <td>{{ task.description }}</td>
+          <td>{{ task.due_date }}</td>
+          <td>{{ task.status }}</td>
+          <td>
+            <button class="btn btn-outline-burgundy btn-sm edit-btn" data-url="task_update/{{ task.id }}">
+              Update
+            </button>
+            <button class="btn btn-danger btn-sm delete-btn" data-url="task_delete/{{ task.id }}">
+              Delete
+            </button>
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <div class="text-center mt-3">
+    <button class="btn btn-burgundy create-btn" data-url="task_create">Create New Task</button>
+  </div>
+
+<!-- Here maglabas ang modals dynamically -->
+  <div class="modal fade" id="taskModal" tabindex="-1" aria-labelledby="taskModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header bg-dark text-white">
+          <h5 class="modal-title" id="taskModalLabel">Task</h5>
+        </div>
+        <div class="modal-body" id="taskModalBody">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+  <!-- Jquery for showing modals -->
+  <script>
+    $(document).ready(function () {
+      // For edit modal
+      $(".edit-btn").click(function () {
+        var url = $(this).data("url");
+        $("#taskModalLabel").text("Edit Task");
+        $("#taskModalBody").load(url);
+        $("#taskModal").modal("show");
+      });
+
+      // For add modal
+      $(".create-btn").click(function () {
+        var url = $(this).data("url");
+        $("#taskModalLabel").text("Create Task");
+        $("#taskModalBody").load(url);
+        $("#taskModal").modal("show");
+      });
+
+      // For delete modal
+      $(".delete-btn").click(function () {
+        var url = $(this).data("url");
+        $("#taskModalLabel").text("Delete Task");
+        $("#taskModalBody").load(url);
+        $("#taskModal").modal("show");
+      });
+
+      // Search function
+      $("#searchInput").on("keyup", function () {
+        var value = $(this).val().toLowerCase();
+        $("#taskTableBody tr").filter(function () {
+          $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
+        });
+      });
+    });
+  </script>
+
+</body>
+</html>
