@@ -9,8 +9,6 @@ def task_list(request):
     for task in tasks:
         if task.due_date < date.today() and task.status != "Overdue":
             task.status = "Overdue"
-        else :
-            task.status = "In progress"
             task.save()
 
     return render(request, 'task_list.html', {'tasks': tasks})
