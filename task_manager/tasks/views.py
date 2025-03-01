@@ -53,4 +53,5 @@ def submit(request):
     due_date = request.POST.get('due_date')
     new_management = Management(title=title, description=description, due_date=due_date)
     new_management.save()
+    
     return redirect('/tasks/')
